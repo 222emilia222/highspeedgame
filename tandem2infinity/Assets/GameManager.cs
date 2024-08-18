@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [HideInInspector]
-    public Vector3 globeCenter;
+    private UIManager um;
+
+    public int maxPplNum;
+
     [SerializeField]
     Transform globe;
+    [HideInInspector]
+    public Vector3 globeCenter;
 
     private void Start()
     {

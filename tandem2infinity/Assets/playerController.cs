@@ -8,34 +8,37 @@ public class playerController : MonoBehaviour
     GameManager gm;
     Rigidbody rb;
 
-    public float speedMod;
+    public float currSpeed;
+
+    public float baseSpeedMod;
     public float rotMod;
     public float gravityRotAdjust;
-    [HideInInspector]
-    public float currSpeed;
     float distToCenter;
 
-    float translation;
     float rotation;
     
     void Start()
     {
         gm = FindAnyObjectByType<GameManager>().GetComponent<GameManager>();
-        distToCenter = Vector3.Distance(gm.globeCenter, this.transform.position);
         rb = GetComponent<Rigidbody>();
+
     }
 
     void FixedUpdate()
     {
-        translation = Input.GetAxis("Vertical") * speedMod;
-
+        //player rotation
         rotation = Input.GetAxis("Horizontal") * rotMod;
 
+        //globe rotation
+        distToCenter = Vector3.Distance(gm.globeCenter, transform.position);
         var normalToCenter = gm.globeCenter - transform.position;
-        var rotationDelta = Quaternion.LookRotation(transform.forward, normalToCenter) * Quaternion.FromToRotation(-transform.up, normalToCenter);
-
-        rb.AddTorque(rotationDelta * -transform.up * gravityRotAdjust * Time.fixedDeltaTime);
+        Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
         
-        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude + transform.forward * translation * Time.fixedDeltaTime, ForceMode.Force);
+        //forward movement
+        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude + transform.forward * baseSpeedMod * Time.fixedDeltaTime, ForceMode.Force);
+
+        //values for managers
+        currSpeed = rb.velocity.magnitude;
     }
 }
