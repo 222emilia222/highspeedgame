@@ -7,6 +7,7 @@ public class playerController : MonoBehaviour
 {
     GameManager gm;
     Rigidbody rb;
+    public Collider coll;
 
     public float currSpeed;
 
@@ -31,6 +32,7 @@ public class playerController : MonoBehaviour
 
         //globe rotation
         distToCenter = Vector3.Distance(gm.globeCenter, transform.position);
+
         var normalToCenter = gm.globeCenter - transform.position;
         Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
