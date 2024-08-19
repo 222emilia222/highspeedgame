@@ -17,5 +17,6 @@ public class GameManager : MonoBehaviour
     {
         um = GetComponent<UIManager>();
         globeCenter = globe.position;
+        maxPplNum = um.sliders.Length + 1;
     }
 }

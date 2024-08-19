@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class playerController : MonoBehaviour
 {
@@ -17,13 +18,14 @@ public class playerController : MonoBehaviour
     public float crashSpeed;
     bool crashTimedOut = false;
     public float crashTime;
+    public float crashForce;
 
     public float speed;
     public float currSpeed;
     public float baseSpeedMod;
     public float rotMod;
     public float gravityRotAdjust;
-    float distToCenter;
+    public float gravMod;
 
     float rotation;
     
@@ -33,29 +35,26 @@ public class playerController : MonoBehaviour
         am = FindAnyObjectByType<AudioManager>().GetComponent<AudioManager>();
         um = FindAnyObjectByType<UIManager>().GetComponent<UIManager>();
         rb = GetComponent<Rigidbody>();
+        speed = peopleNum;
 
     }
-
     private void Update()
     {
-        speed = peopleNum;
+        if (crashTimedOut) { speed = 0f; }
     }
     void FixedUpdate()
     {
         //globe rotation
-        distToCenter = Vector3.Distance(gm.globeCenter, transform.position);
         var normalToCenter = gm.globeCenter - transform.position;
         Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
 
         //player rotation
         rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
-        rb.AddTorque(new Vector3(0, rotation, 0), ForceMode.Force);
+        rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);
 
         //forward movement
-        if (!crashTimedOut) {
-            rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude + transform.forward * baseSpeedMod * Time.fixedDeltaTime * speed, ForceMode.Force);
-        }
+        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude * gravMod + transform.forward * baseSpeedMod * Time.fixedDeltaTime * speed, ForceMode.Force);
 
         //values for managers
         currSpeed = rb.velocity.magnitude;
@@ -66,23 +65,25 @@ public class playerController : MonoBehaviour
     {
         if (collision.collider.CompareTag("Obstacle"))
         {
-            StartCoroutine(CrashTimeOut());
-            crashSpeed = rb.velocity.magnitude;
-            rb.velocity = Vector3.zero;
-            rb.AddForce(-transform.forward + transform.up, ForceMode.Impulse);
-                //fx
-                ContactPoint contact = collision.contacts[0];
-                Quaternion fxRot = Quaternion.FromToRotation(Vector3.up, contact.normal);
-                Vector3 fxPos = contact.point;
-            //remove bikers
-
+            if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
+            //fx
+            ContactPoint contact = collision.contacts[0];
+            Quaternion fxRot = Quaternion.FromToRotation(Vector3.up, contact.normal);
+            Vector3 fxPos = contact.point;
         }
     }
     IEnumerator CrashTimeOut()
     {
         crashTimedOut = true;
+        crashSpeed = speed;
+        rb.velocity = Vector3.zero;
+        rb.AddForce((transform.up - transform.forward * 2) * crashForce, ForceMode.Impulse);
+        //remove max 2 bikers
+
         yield return new WaitForSeconds(crashTime);
+
         crashTimedOut = false;
+        speed = crashSpeed;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -91,6 +92,13 @@ public class playerController : MonoBehaviour
             //New Biker !
             Destroy(other.gameObject);
             peopleNum++;
+            speed *= 1.5f;
+            rotMod *= 1.25f;
+            //UI
+            um.slideNum++;
+            um.sliderFill += 5;
+            um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
+            
         }
     }
 }

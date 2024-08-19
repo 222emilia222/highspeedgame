@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using TMPro;
 
 public class UIManager : MonoBehaviour
@@ -10,21 +10,39 @@ public class UIManager : MonoBehaviour
     private GameManager gm;
     private AudioManager am;
 
-    public Slider speedSlider;
+    public Slider[] sliders;
+    [HideInInspector]
+    public int slideNum = 0;
     public TMP_Text peopleCounter;
+    [HideInInspector]
+    public float sliderFill = 0;
+    public RectTransform closer;
 
     private void Start()
     {
         pc = FindAnyObjectByType<playerController>().GetComponent<playerController>();
         gm = GetComponent<GameManager>();
         am = GetComponent<AudioManager>();
+
+        for (int i = 0; i < sliders.Length; i++)
+        {
+            sliders[i].value = 0;
+        }
     }
     private void Update()
     {
         //People Pick Up Counter
         peopleCounter.text = pc.peopleNum + "/" + gm.maxPplNum + " Bikers";
 
-        //Slider
-        speedSlider.value = pc.currSpeed;
+        //Slider time filler
+        for (int i = 0;i <= slideNum; i++)
+        {
+            sliderFill += Time.deltaTime;
+            sliders[i].value = sliderFill;
+        }
+    }
+    public void MoveCloser()
+    {
+        //move the closer image
     }
 }
