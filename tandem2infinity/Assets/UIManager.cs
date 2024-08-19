@@ -8,19 +8,23 @@ public class UIManager : MonoBehaviour
 {
     private playerController pc;
     private GameManager gm;
+    private AudioManager am;
 
     public Slider speedSlider;
     public TMP_Text peopleCounter;
-    public int peopleNum = 1;
 
     private void Start()
     {
         pc = FindAnyObjectByType<playerController>().GetComponent<playerController>();
-        gm = FindAnyObjectByType<GameManager>().GetComponent<GameManager>();
+        gm = GetComponent<GameManager>();
+        am = GetComponent<AudioManager>();
     }
     private void Update()
     {
         //People Pick Up Counter
-        peopleCounter.text = peopleNum + "/" + gm.maxPplNum + " Bikers";
+        peopleCounter.text = pc.peopleNum + "/" + gm.maxPplNum + " Bikers";
+
+        //Slider
+        speedSlider.value = pc.currSpeed;
     }
 }

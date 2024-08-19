@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        um = GetComponent<UIManager>();
         globeCenter = globe.position;
     }
 }
