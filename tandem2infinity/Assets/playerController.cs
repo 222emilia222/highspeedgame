@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -30,20 +31,30 @@ public class playerController : MonoBehaviour
     float rotation;
 
     [Header("Animation")]
-    private float animSpeed;
-    public GameObject[] wheels = new GameObject[2];
-    public GameObject pedals;
     public GameObject frontFrame;
     public GameObject handle;
-    
+    public GameObject pedals;
+    public GameObject[] wheels = new GameObject[2];
+    private float animSpeed;
+
+    [Header("Camera")]
+    public Vector3 upgradeAngleChange;
+    private Transform cam;
+
+    Quaternion startHandle;
+    Quaternion startFrontFrame;
+
     void Start()
     {
-        gm = FindAnyObjectByType<GameManager>().GetComponent<GameManager>();
-        am = FindAnyObjectByType<AudioManager>().GetComponent<AudioManager>();
-        um = FindAnyObjectByType<UIManager>().GetComponent<UIManager>();
+        gm = FindAnyObjectByType<GameManager>();
+        am = FindAnyObjectByType<AudioManager>();
+        um = FindAnyObjectByType<UIManager>();
         rb = GetComponent<Rigidbody>();
         speed = peopleNum;
+        cam = Camera.main.transform;
 
+        startHandle = handle.transform.localRotation;
+        startFrontFrame = frontFrame.transform.localRotation;
     }
     private void Update()
     {
@@ -73,10 +84,12 @@ public class playerController : MonoBehaviour
         wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
         pedals.transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
 
-        
+        float rotAnim = Input.GetAxis("Horizontal");
+        handle.transform.localRotation = Quaternion.Lerp(handle.transform.localRotation, startHandle * Quaternion.Euler(0, 0, rotAnim * 30), Time.fixedTime * 2);
+        frontFrame.transform.localRotation = Quaternion.Lerp(frontFrame.transform.localRotation, startFrontFrame * Quaternion.Euler(0, 0, rotAnim * 30), Time.fixedTime * 2);
     }
 
-    //Crashhandler
+    //CRASHHANDLER
     IEnumerator CrashTimeOut()
     {
         crashTimedOut = true;
@@ -92,9 +105,9 @@ public class playerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        //BIKER PICKUP
         if (other.CompareTag("Biker"))
         {
-            //New Biker !
             Destroy(other.gameObject);
             peopleNum++;
             speed *= 1.5f;
@@ -103,8 +116,12 @@ public class playerController : MonoBehaviour
             um.slideNum++;
             um.sliderFill += 5;
             um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
-            
+            //Camera
+            var camController = cam.gameObject.GetComponent<cameraController>();
+            camController.moveTo += upgradeAngleChange;
+            camController.MoveCam();
         }
+        //CRASH CHECK
         if (other.gameObject.CompareTag("Obstacle"))
         {
             if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }

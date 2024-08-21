@@ -10,7 +10,7 @@ public class PickUp : MonoBehaviour
 
     private void Start()
     {
-        gm = FindAnyObjectByType<GameManager>().GetComponent<GameManager>();
+        gm = FindAnyObjectByType<GameManager>();
     }
     private void FixedUpdate()
     {
