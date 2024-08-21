@@ -6,7 +6,8 @@ public class PickUp : MonoBehaviour
 {
     GameManager gm;
     public float spinSpeed;
-    public Transform glowTf;
+    public Transform glowTransform;
+    private bool onlyOnce = true;
 
     private void Start()
     {
@@ -18,9 +19,18 @@ public class PickUp : MonoBehaviour
         Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 200);
 
-        glowTf.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * spinSpeed) % 360);
-        glowTf.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.25f, (Mathf.Sin(Time.timeSinceLevelLoad) + 1) /2 );
+        glowTransform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * spinSpeed) % 360);
+        glowTransform.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.25f, (Mathf.Sin(Time.timeSinceLevelLoad) + 1) /2 );
 
-        transform.LookAt(Camera.main.transform);
+        transform.LookAt(Camera.main.transform.parent.parent);
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player") && onlyOnce)
+        {
+            onlyOnce = false;
+            other.GetComponentInParent<playerController>().BikerPickedUp();
+            Destroy(this.gameObject);
+        }
     }
 }

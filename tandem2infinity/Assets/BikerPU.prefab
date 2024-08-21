@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 4787080273562386578}
   - component: {fileID: 8734720581348552856}
   - component: {fileID: 3226710694034322077}
-  - component: {fileID: 8834709082166708}
+  - component: {fileID: 5803038020216739159}
   m_Layer: 0
   m_Name: BikerPU
   m_TagString: Biker
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spinSpeed: 20
-  glowTf: {fileID: 6411180155013155900}
+  glowTransform: {fileID: 6411180155013155900}
 --- !u!212 &3226710694034322077
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -185,8 +185,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!65 &8834709082166708
-BoxCollider:
+--- !u!136 &5803038020216739159
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -203,6 +203,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.12, y: 5.12, z: 1.4414558}
-  m_Center: {x: 0, y: 0, z: -0.01341629}
+  serializedVersion: 2
+  m_Radius: 3.37
+  m_Height: 5.12
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}

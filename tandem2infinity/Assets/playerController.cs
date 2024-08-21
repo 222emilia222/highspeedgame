@@ -13,7 +13,7 @@ public class playerController : MonoBehaviour
     Rigidbody rb;
     public BoxCollider coll;
 
-    public int peopleNum = 1;
+    public int peopleNum;
 
     [HideInInspector]
     public float crashSpeed;
@@ -37,8 +37,15 @@ public class playerController : MonoBehaviour
     public GameObject[] wheels = new GameObject[2];
     private float animSpeed;
 
+    [Header("Tandem Loop")]
+    public GameObject loopFrame;
+    public GameObject backFrame;
+    public Vector3 loopOffset;
+    private GameObject[] loops = new GameObject[9];
+    public Color[] shirtColors;
+
     [Header("Camera")]
-    public Vector3 upgradeAngleChange;
+    public Vector3[] upgradeAngleChange;
     private Transform cam;
 
     Quaternion startHandle;
@@ -52,6 +59,8 @@ public class playerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         speed = peopleNum;
         cam = Camera.main.transform;
+
+        peopleNum = 0;
 
         startHandle = handle.transform.localRotation;
         startFrontFrame = frontFrame.transform.localRotation;
@@ -105,26 +114,29 @@ public class playerController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        //BIKER PICKUP
-        if (other.CompareTag("Biker"))
-        {
-            Destroy(other.gameObject);
-            peopleNum++;
-            speed *= 1.5f;
-            rotMod *= 1.25f;
-            //UI
-            um.slideNum++;
-            um.sliderFill += 5;
-            um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
-            //Camera
-            var camController = cam.gameObject.GetComponent<cameraController>();
-            camController.moveTo += upgradeAngleChange;
-            camController.MoveCam();
-        }
         //CRASH CHECK
         if (other.gameObject.CompareTag("Obstacle"))
         {
             if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
         }
+    }
+    public void BikerPickedUp()
+    {
+        //3D Model
+        loops[peopleNum] = Instantiate(loopFrame, GetComponentInChildren<BoxCollider>().transform);
+        loops[peopleNum].transform.localPosition -= loopOffset * (peopleNum+1);
+        backFrame.transform.localPosition -= loopOffset;
+        //UI
+        um.slideNum++;
+        um.sliderFill += 5;
+        um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
+        //Camera
+        var camController = cam.gameObject.GetComponent<cameraController>();
+        camController.moveTo += upgradeAngleChange[peopleNum];
+        camController.MoveCam();
+        //Parameters
+        peopleNum++;
+        speed *= 1.5f;
+        rotMod *= 1.25f;
     }
 }

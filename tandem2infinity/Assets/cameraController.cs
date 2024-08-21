@@ -19,7 +19,6 @@ public class cameraController : MonoBehaviour
         StartCoroutine(MoveCamAnim());
     }
 
-
     IEnumerator MoveCamAnim()
     {
         float animTime = 0;
@@ -34,7 +33,6 @@ public class cameraController : MonoBehaviour
 
         transform.localPosition = moveTo;
     }
-        
 
     private void LateUpdate()
     {
