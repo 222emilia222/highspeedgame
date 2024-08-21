@@ -28,6 +28,13 @@ public class playerController : MonoBehaviour
     public float gravMod;
 
     float rotation;
+
+    [Header("Animation")]
+    private float animSpeed;
+    public GameObject[] wheels = new GameObject[2];
+    public GameObject pedals;
+    public GameObject frontFrame;
+    public GameObject handle;
     
     void Start()
     {
@@ -58,6 +65,15 @@ public class playerController : MonoBehaviour
 
         //values for managers
         currSpeed = rb.velocity.magnitude;
+
+
+        //bike animation
+        animSpeed = speed * 100;
+        wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
+        wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
+        pedals.transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
+
+        
     }
 
     //Crashhandler
