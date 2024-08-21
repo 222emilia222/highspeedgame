@@ -10,7 +10,7 @@ public class playerController : MonoBehaviour
     AudioManager am;
     private UIManager um;
     Rigidbody rb;
-    public Collider coll;
+    public BoxCollider coll;
 
     public int peopleNum = 1;
 
@@ -61,17 +61,6 @@ public class playerController : MonoBehaviour
     }
 
     //Crashhandler
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Obstacle"))
-        {
-            if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
-            //fx
-            ContactPoint contact = collision.contacts[0];
-            Quaternion fxRot = Quaternion.FromToRotation(Vector3.up, contact.normal);
-            Vector3 fxPos = contact.point;
-        }
-    }
     IEnumerator CrashTimeOut()
     {
         crashTimedOut = true;
@@ -99,6 +88,10 @@ public class playerController : MonoBehaviour
             um.sliderFill += 5;
             um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
             
+        }
+        if (other.gameObject.CompareTag("Obstacle"))
+        {
+            if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
         }
     }
 }
