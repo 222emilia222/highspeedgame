@@ -50,6 +50,7 @@ MonoBehaviour:
   lookAtTarget: {fileID: 3377097074601366977}
   cameraOrigin: {fileID: 4776432078361103225}
   moveTo: {x: 0, y: 0, z: 0}
+  transSpeed: 1
 --- !u!20 &8089930260603292854
 Camera:
   m_ObjectHideFlags: 0
@@ -690,7 +691,16 @@ MonoBehaviour:
   gravMod: 4
   frontFrame: {fileID: 987082769591240258}
   handle: {fileID: 5377413100855685905}
-  pedals: {fileID: 1301988236629075151}
+  pedals:
+  - {fileID: 1301988236629075151}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   wheels:
   - {fileID: 5779911315333706722}
   - {fileID: 1964462670617043892}

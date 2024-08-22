@@ -33,7 +33,7 @@ public class playerController : MonoBehaviour
     [Header("Animation")]
     public GameObject frontFrame;
     public GameObject handle;
-    public GameObject pedals;
+    public GameObject[] pedals = new GameObject[9];
     public GameObject[] wheels = new GameObject[2];
     private float animSpeed;
 
@@ -86,12 +86,11 @@ public class playerController : MonoBehaviour
         //values for managers
         currSpeed = rb.velocity.magnitude;
 
-
         //bike animation
         animSpeed = speed * 100;
         wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
         wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
-        pedals.transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
+        for (int i = 0; i <= peopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);}
 
         float rotAnim = Input.GetAxis("Horizontal");
         handle.transform.localRotation = Quaternion.Lerp(handle.transform.localRotation, startHandle * Quaternion.Euler(0, 0, rotAnim * 30), Time.fixedTime * 2);
@@ -122,21 +121,24 @@ public class playerController : MonoBehaviour
     }
     public void BikerPickedUp()
     {
-        //3D Model
-        loops[peopleNum] = Instantiate(loopFrame, GetComponentInChildren<BoxCollider>().transform);
-        loops[peopleNum].transform.localPosition -= loopOffset * (peopleNum+1);
-        backFrame.transform.localPosition -= loopOffset;
-        //UI
-        um.slideNum++;
-        um.sliderFill += 5;
-        um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
-        //Camera
-        var camController = cam.gameObject.GetComponent<cameraController>();
-        camController.moveTo += upgradeAngleChange[peopleNum];
-        camController.MoveCam();
-        //Parameters
-        peopleNum++;
-        speed *= 1.5f;
-        rotMod *= 1.25f;
+        if (!gm.pressedQuit) { 
+            //3D Model
+            loops[peopleNum] = Instantiate(loopFrame, GetComponentInChildren<BoxCollider>().transform);
+            pedals[peopleNum+1] = loops[peopleNum].transform.Find("PedalCenter").gameObject;
+            loops[peopleNum].transform.localPosition -= loopOffset * (peopleNum+1);
+            backFrame.transform.localPosition -= loopOffset;
+            //UI
+            um.slideNum++;
+            um.sliderFill += 5;
+            um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
+            //Camera
+            var camController = cam.gameObject.GetComponent<cameraController>();
+            camController.moveTo += upgradeAngleChange[peopleNum];
+            camController.MoveCam();
+            //Parameters
+            peopleNum++;
+            speed *= 1.5f;
+            rotMod *= 1.25f;
+        }
     }
 }

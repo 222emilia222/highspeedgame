@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
             }
             else { sliders[i].minValue = 0; sliders[i].maxValue = initSegmentTime; }
         }
-        allTime = initSegmentTime + segmentTime * sliders.Length;
+        allTime = initSegmentTime + segmentTime * (sliders.Length-1);
     }
     private void Update()
     {

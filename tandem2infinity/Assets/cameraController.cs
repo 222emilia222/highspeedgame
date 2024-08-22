@@ -5,12 +5,17 @@ using UnityEngine.UIElements;
 
 public class cameraController : MonoBehaviour
 {
+    private GameManager gm;
     private Transform player;
     public Transform lookAtTarget;
     public Transform cameraOrigin;
+    [HideInInspector]
     public Vector3 moveTo = Vector3.zero;
+    [SerializeField]
+    private float transSpeed; 
     private void Start()
     {
+        gm = FindAnyObjectByType<GameManager>();
         player = transform.parent;
     }
 
@@ -27,7 +32,7 @@ public class cameraController : MonoBehaviour
         while (animTime <= 1)
         {
             transform.localPosition = Vector3.Lerp(startVector, moveTo, animTime);
-            animTime += Time.deltaTime * 2;
+            animTime += Time.deltaTime * transSpeed;
             yield return null;
         }
 
@@ -37,6 +42,6 @@ public class cameraController : MonoBehaviour
     private void LateUpdate()
     {
         transform.rotation = Quaternion.LookRotation(lookAtTarget.transform.position - transform.position, player.up);
-       // transform.position += (transform.position - moveTo) * Time.deltaTime;
+        if(gm.pressedQuit) { transform.position += (transform.position - moveTo) * Time.deltaTime / 1.5f; }
     }
 }
