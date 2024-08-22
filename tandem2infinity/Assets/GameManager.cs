@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ConsoleLog()
     {
         yield return null;
-        print("Minimum Time: " + um.allTime + "; Globeradius: " + globeCenter.magnitude + ";");
+        print("Minimum Time: " + um.allTime + "s; Globeradius: " + globeCenter.magnitude * 2 + ";");
     }
     private void Update()
     {
@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour
     private IEnumerator QuitGame()
     {
         pressedQuit = true;
-        yield return new WaitForSeconds(3);
-        //show stern32 logo
+        yield return new WaitForSeconds(3.5f);
+        //show stern32 logo anim
         yield return new WaitForSeconds(1);
         Application.Quit();
         print("Quit Game!");

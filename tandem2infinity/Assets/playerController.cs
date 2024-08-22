@@ -15,12 +15,6 @@ public class playerController : MonoBehaviour
 
     public int peopleNum;
 
-    [HideInInspector]
-    public float crashSpeed;
-    bool crashTimedOut = false;
-    public float crashTime;
-    public float crashForce;
-
     public float speed;
     public float currSpeed;
     public float baseSpeedMod;
@@ -30,12 +24,25 @@ public class playerController : MonoBehaviour
 
     float rotation;
 
+    [Header("Crash")]
+    public float crashTime;
+    public float crashForce;
+    [SerializeField]
+    private float crashPenalty;
+    [SerializeField]
+    private float pickUpBonus;
+    [HideInInspector]
+    public float crashSpeed;
+    [HideInInspector]
+    public bool crashTimedOut = false;
+
     [Header("Animation")]
+    public float animSpeed;
     public GameObject frontFrame;
     public GameObject handle;
-    public GameObject[] pedals = new GameObject[9];
+    public GameObject pedalCenter;
+    private GameObject[] pedals = new GameObject[9];
     public GameObject[] wheels = new GameObject[2];
-    private float animSpeed;
 
     [Header("Tandem Loop")]
     public GameObject loopFrame;
@@ -64,6 +71,7 @@ public class playerController : MonoBehaviour
 
         startHandle = handle.transform.localRotation;
         startFrontFrame = frontFrame.transform.localRotation;
+        pedals[0] = pedalCenter;
     }
     private void Update()
     {
@@ -87,10 +95,9 @@ public class playerController : MonoBehaviour
         currSpeed = rb.velocity.magnitude;
 
         //bike animation
-        animSpeed = speed * 100;
-        wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
-        wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);
-        for (int i = 0; i <= peopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed) % 360);}
+        wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);
+        wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);
+        for (int i = 0; i <= peopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);}
 
         float rotAnim = Input.GetAxis("Horizontal");
         handle.transform.localRotation = Quaternion.Lerp(handle.transform.localRotation, startHandle * Quaternion.Euler(0, 0, rotAnim * 30), Time.fixedTime * 2);
@@ -104,7 +111,8 @@ public class playerController : MonoBehaviour
         crashSpeed = speed;
         rb.velocity = Vector3.zero;
         rb.AddForce((transform.up - transform.forward * 2) * crashForce, ForceMode.Impulse);
-        //remove max 2 bikers
+
+        um.SliderFill -= crashPenalty;
 
         yield return new WaitForSeconds(crashTime);
 
@@ -129,7 +137,7 @@ public class playerController : MonoBehaviour
             backFrame.transform.localPosition -= loopOffset;
             //UI
             um.slideNum++;
-            um.sliderFill += 5;
+            um.SliderFill += pickUpBonus;
             um.sliders[um.slideNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
             //Camera
             var camController = cam.gameObject.GetComponent<cameraController>();

@@ -20,8 +20,23 @@ public class UIManager : MonoBehaviour
     private float segmentTime;
     [HideInInspector]
     public int slideNum = 0;
+    private float _sliderFill;
     [HideInInspector]
-    public float sliderFill = 0;
+    public float SliderFill
+    {
+        get
+        {
+            return _sliderFill;
+        }
+        set
+        {
+            if (value < initSegmentTime + segmentTime * pc.peopleNum)
+            { 
+                if (value < 0) { value = 0; }
+                _sliderFill = value; 
+            }
+        }
+    }
     public float allTime;
 
     private void Start()
@@ -37,7 +52,6 @@ public class UIManager : MonoBehaviour
             {
                 sliders[i].minValue = initSegmentTime + segmentTime * (i - 1);
                 sliders[i].maxValue = initSegmentTime + segmentTime * (i);
-                break;
             }
             else { sliders[i].minValue = 0; sliders[i].maxValue = initSegmentTime; }
         }
@@ -51,8 +65,11 @@ public class UIManager : MonoBehaviour
         //Slider time filler
         for (int i = 0;i <= slideNum; i++)
         {
-            sliderFill += Time.deltaTime;
-            sliders[i].value = sliderFill;
+            if (!pc.crashTimedOut)
+            {
+                SliderFill += Time.deltaTime;
+            }
+            sliders[i].value = SliderFill;
         }
     }
     public void MoveCloser()
