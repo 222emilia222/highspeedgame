@@ -14,10 +14,8 @@ public class UIManager : MonoBehaviour
     public RectTransform closer;
     [Header("Sliders")]
     public Slider[] sliders;
-    [SerializeField]
-    private float initSegmentTime;
-    [SerializeField]
-    private float segmentTime;
+    public float initSegmentTime;
+    public float segmentTime;
     [HideInInspector]
     public int slideNum = 0;
     private float _sliderFill;

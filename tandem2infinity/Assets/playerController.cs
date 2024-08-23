@@ -15,8 +15,8 @@ public class playerController : MonoBehaviour
 
     public int peopleNum;
 
-    public float speed;
     public float currSpeed;
+    private float maxSpeed;
     public float baseSpeedMod;
     public float rotMod;
     public float gravityRotAdjust;
@@ -64,7 +64,7 @@ public class playerController : MonoBehaviour
         am = FindAnyObjectByType<AudioManager>();
         um = FindAnyObjectByType<UIManager>();
         rb = GetComponent<Rigidbody>();
-        speed = peopleNum;
+        currSpeed = peopleNum;
         cam = Camera.main.transform;
 
         peopleNum = 0;
@@ -75,7 +75,7 @@ public class playerController : MonoBehaviour
     }
     private void Update()
     {
-        if (crashTimedOut) { speed = 0f; }
+        if (crashTimedOut) { currSpeed = 0f; }
     }
     void FixedUpdate()
     {
@@ -89,15 +89,12 @@ public class playerController : MonoBehaviour
         rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);
 
         //forward movement
-        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude * gravMod + transform.forward * baseSpeedMod * Time.fixedDeltaTime * speed, ForceMode.Force);
-
-        //values for managers
-        currSpeed = rb.velocity.magnitude;
+        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude * gravMod + transform.forward * baseSpeedMod * Time.fixedDeltaTime * currSpeed, ForceMode.Force);
 
         //bike animation
-        wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);
-        wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);
-        for (int i = 0; i <= peopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * speed) % 360);}
+        wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
+        wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
+        for (int i = 0; i <= peopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);}
 
         float rotAnim = Input.GetAxis("Horizontal");
         handle.transform.localRotation = Quaternion.Lerp(handle.transform.localRotation, startHandle * Quaternion.Euler(0, 0, rotAnim * 30), Time.fixedTime * 2);
@@ -108,7 +105,7 @@ public class playerController : MonoBehaviour
     IEnumerator CrashTimeOut()
     {
         crashTimedOut = true;
-        crashSpeed = speed;
+        crashSpeed = currSpeed;
         rb.velocity = Vector3.zero;
         rb.AddForce((transform.up - transform.forward * 2) * crashForce, ForceMode.Impulse);
 
@@ -117,7 +114,7 @@ public class playerController : MonoBehaviour
         yield return new WaitForSeconds(crashTime);
 
         crashTimedOut = false;
-        speed = crashSpeed;
+        currSpeed = crashSpeed;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -145,7 +142,7 @@ public class playerController : MonoBehaviour
             camController.MoveCam();
             //Parameters
             peopleNum++;
-            speed *= 1.5f;
+            currSpeed *= 1.5f;
             rotMod *= 1.25f;
         }
     }

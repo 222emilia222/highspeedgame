@@ -253,7 +253,7 @@ MonoBehaviour:
   - {fileID: 4762462298052361186}
   loopFrame: {fileID: -3640541235966205065, guid: c55f4c1139e66434fa8629e68cf23dae, type: 3}
   backFrame: {fileID: 7602584286527024776}
-  loopOffset: {x: -1.25, y: 0, z: 0}
+  loopOffset: {x: 0, y: 0, z: 1.25}
   shirtColors:
   - {r: 0, g: 0, b: 0, a: 0}
   - {r: 0, g: 0, b: 0, a: 0}
@@ -270,7 +270,7 @@ MonoBehaviour:
   - {x: 4, y: -1, z: -1}
   - {x: 0, y: 2, z: -2}
   - {x: 3, y: -4, z: -1}
-  - {x: -2, y: -1, z: 4}
+  - {x: -2, y: -2.5, z: 1}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
@@ -358,7 +358,8 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8306504697259149376, guid: c55f4c1139e66434fa8629e68cf23dae, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c55f4c1139e66434fa8629e68cf23dae, type: 3}
