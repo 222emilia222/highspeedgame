@@ -234,14 +234,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   coll: {fileID: 0}
-  peopleNum: 1
   currSpeed: 0
-  baseSpeedMod: 2500
+  baseSpeedMod: 400
   speedUpgradeMod: 1.4
   speedOnetimeBonus: 0.2
-  rotMod: 130
-  gravityRotAdjust: 183
-  gravMod: 4
+  rotMod: 50
+  gravityRotAdjust: 0.5
+  gravMod: 1
   crashTime: 2
   crashForce: 18
   crashPenalty: 20

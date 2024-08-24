@@ -2471,12 +2471,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1491676970928693999, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
-      propertyPath: gravMod
+      propertyPath: gravityRotAdjust
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1491676970928693999, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
-      propertyPath: baseSpeedMod
-      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 4650437844039486956, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
       propertyPath: m_LocalPosition.x

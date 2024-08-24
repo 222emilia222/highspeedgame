@@ -94,17 +94,23 @@ public class playerController : MonoBehaviour
             else { currSpeed += maxSpeed * Time.fixedDeltaTime / um.segmentTime; }
         }
 
+        rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
+        transform.rotation *= Quaternion.Euler(new Vector3(0, rotation, 0));
+
         var normalToCenter = gm.globeCenter - transform.position;
-        Vector3 grav;
+        Vector3 grav = Vector3.zero;
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.up, out hit, 5, layerMask))
         {
-            print("Ground Detected!");
-            transform.rotation = Quaternion.LookRotation(hit.normal);
+            //Vector3 normalToSlope = hit.collider.gameObject.transform.position - transform.position;
+            //Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToSlope.normalized) * transform.rotation;
+            //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward, hit.normal), gravityRotAdjust);
+
             down = hit.point - transform.position;
             down = down.normalized;
-            //grav = down * Physics.gravity.magnitude * gravMod;
-            grav = Vector3.zero;
+            grav = down * Physics.gravity.magnitude * gravMod / 5;
         }
         else {
             Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
@@ -112,12 +118,8 @@ public class playerController : MonoBehaviour
             down = normalToCenter.normalized;
             grav = down * Physics.gravity.magnitude * gravMod;
         }
-        Vector3 mov = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed;
-        rb.velocity = mov + grav;
+        rb.velocity = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed + grav;
         Debug.DrawRay(transform.position, -transform.up * 5, Color.yellow);
-
-        rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
-        rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);
 
         wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
         wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
