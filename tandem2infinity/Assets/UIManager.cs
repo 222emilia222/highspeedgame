@@ -65,9 +65,6 @@ public class UIManager : MonoBehaviour
     }
     private void Update()
     {
-        peopleCounter.text = pc.PeopleNum + 1 + "/" + gm.maxPplNum;
-
-        //Slider time filler
         for (int i = 0;i <= pc.PeopleNum; i++)
         {
             if (!pc.crashTimedOut)
@@ -76,9 +73,5 @@ public class UIManager : MonoBehaviour
             }
             sliders[i].value = SliderFill;
         }
-    }
-    public void MoveCloser()
-    {
-        //move the closer image
     }
 }

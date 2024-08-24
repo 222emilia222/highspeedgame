@@ -31,8 +31,6 @@ public class playerController : MonoBehaviour
     private Vector3 down;
 
     float rotation;
-    private Vector3 slopeDir;
-    private Vector3 lastDir;
 
     [Header("Crash")]
     public float crashTime;
@@ -80,8 +78,6 @@ public class playerController : MonoBehaviour
         maxSpeed = 1;
         currSpeed = 0.75f;
 
-        lastDir = transform.forward;
-
         startHandle = handle.transform.localRotation;
         startFrontFrame = frontFrame.transform.localRotation;
         pedals[0] = pedalCenter;
@@ -99,23 +95,30 @@ public class playerController : MonoBehaviour
         }
 
         var normalToCenter = gm.globeCenter - transform.position;
-        //slopeDir = Vector3.ProjectOnPlane(lastDir, slopeHit.normal);
-        //transform.rotation = Quaternion.LookRotation(slopeDir);
-        //lastDir = slopeDir;
+        Vector3 grav;
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.up, out hit, 10, layerMask))
+        if (Physics.Raycast(transform.position, -transform.up, out hit, 5, layerMask))
         {
             print("Ground Detected!");
-            transform.rotation = Quaternion.LookRotation(transform.forward, hit.normal);
+            Vector3 fw = new Vector3(transform.forward.x, 0, transform.forward.z);
+            Vector3 rt = new Vector3(transform.right.x, 0, transform.right.z);
+            Vector3 lastDir = (fw + rt).normalized;
+            Vector3 slopeDir = Vector3.ProjectOnPlane(lastDir, hit.normal);
+            transform.rotation = Quaternion.LookRotation(slopeDir);
             down = hit.point - transform.position;
+            down = down.normalized;
+            //grav = down * Physics.gravity.magnitude * gravMod;
+            grav = Vector3.zero;
         }
         else {
             Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
             down = normalToCenter.normalized;
+            grav = down * Physics.gravity.magnitude * gravMod;
         }
-        rb.AddForce(down * Physics.gravity.magnitude * gravMod + transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed, ForceMode.Force);
-        Debug.DrawRay(transform.position, -transform.up * 10, Color.yellow);
+        Vector3 mov = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed;
+        rb.velocity = mov + grav;
+        Debug.DrawRay(transform.position, -transform.up * 5, Color.yellow);
 
         rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
         rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);

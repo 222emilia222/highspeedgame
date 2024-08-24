@@ -3714,7 +3714,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 5782781820708948875, guid: f5ee347fdc6ecc14d830814fdb1a923c, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5ee347fdc6ecc14d830814fdb1a923c, type: 3}
@@ -3840,6 +3841,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1491676970928693999, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
+      propertyPath: gravMod
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491676970928693999, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
+      propertyPath: baseSpeedMod
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 4650437844039486956, guid: cfd6366534bc82245bba0e15bf1b1396, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
