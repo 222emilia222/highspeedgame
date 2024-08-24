@@ -11,7 +11,7 @@ public class playerController : MonoBehaviour
     private UIManager um;
     Rigidbody rb;
     public LayerMask layerMask;
-    public BoxCollider coll;
+    private Animator[] anims = new Animator[9];
 
     private bool onlyOnce = true;
 
@@ -48,6 +48,7 @@ public class playerController : MonoBehaviour
 
     [Header("Animation")]
     public float animSpeed;
+    public float animSpeed2D;
     public GameObject frontFrame;
     public GameObject handle;
     public GameObject pedalCenter;
@@ -76,6 +77,7 @@ public class playerController : MonoBehaviour
         um = FindAnyObjectByType<UIManager>();
         rb = GetComponent<Rigidbody>();
         cam = Camera.main.transform;
+        anims[0] = GetComponentInChildren<Animator>();
 
         PeopleNum = 0;
         maxSpeed = 1;
@@ -89,6 +91,11 @@ public class playerController : MonoBehaviour
     private void Update()
     {
         //print("PplNum: " + PeopleNum + ";");
+        for (int i = 0; i < anims.Length; i++)
+        {
+            if (anims[i] == null) { break; }
+            anims[i].SetFloat("AnimSpeedMod", currSpeed * animSpeed2D);
+        }
     }
     void FixedUpdate()
     {
@@ -159,16 +166,17 @@ public class playerController : MonoBehaviour
     }
     public void BikerPickedUp()
     {
-        if (!gm.pressedQuit) { 
+        if (!gm.pressedQuit) {
             loops[PeopleNum] = Instantiate(loopFrame, GetComponentInChildren<CapsuleCollider>().transform);
-            pedals[PeopleNum+1] = loops[PeopleNum].transform.Find("PedalCenter").gameObject;
-            loops[PeopleNum].transform.localPosition -= loopOffset * (PeopleNum+1);
+            pedals[PeopleNum + 1] = loops[PeopleNum].transform.Find("PedalCenter").gameObject;
+            loops[PeopleNum].transform.localPosition -= loopOffset * (PeopleNum + 1);
             backFrame.transform.localPosition -= loopOffset;
+            anims[PeopleNum + 1] = loops[PeopleNum].GetComponentInChildren<Animator>();
 
             um.currFill += pickUpBonus;
             um.NewSegmentUnlock(PeopleNum + 1);
 
-            if(PeopleNum != gm.maxPplNum) { 
+            if (PeopleNum != gm.maxPplNum) {
                 var camController = cam.gameObject.GetComponent<cameraController>();
                 camController.moveTo += upgradeAngleChange[PeopleNum];
                 camController.MoveCam();
