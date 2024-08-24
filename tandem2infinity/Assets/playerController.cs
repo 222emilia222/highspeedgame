@@ -189,7 +189,7 @@ public class playerController : MonoBehaviour
             PeopleNum++;
             currSpeed += speedOnetimeBonus;
             maxSpeed = currSpeed * speedUpgradeMod;
-            rotMod *= 1.25f;
+            rotMod *= 1.10f;
 
             if(onlyOnce) { um.FlashText(2, um.controlTexts[4]); }
         }

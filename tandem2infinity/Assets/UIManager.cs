@@ -98,7 +98,7 @@ public class UIManager : MonoBehaviour
     }
     public IEnumerator IntroText()
     {
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.2f);
         controlTexts[0].enabled = true;
         yield return new WaitForSeconds(0.9f);
         controlTexts[0].enabled = false;
