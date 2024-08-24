@@ -66,8 +66,36 @@ public class playerController : MonoBehaviour
     Quaternion startHandle;
     Quaternion startFrontFrame;
 
+    public bool canDetectSlope;
+    bool onSlope
+    {
+        get
+        {
+            return _slopeValue;
+        }
+        set
+        {
+            
+            _slopeValue = value;
+            if (value != canDetectSlope) //Triggers if you go from slope to no slope or vice versa
+            {
+                print("Switched between slope/ground, onSlope = "+value);
+                canDetectSlope = value;
+                if (!canDetectSlope)
+                {
+                    print("Invoking");
+                    Invoke("ResetDetection", 1);
+                }
+            }
+            
+        }
+    }
+    public bool _slopeValue;
+
     void Start()
     {
+
+        onSlope = false;
         gm = FindAnyObjectByType<GameManager>();
         am = FindAnyObjectByType<AudioManager>();
         um = FindAnyObjectByType<UIManager>();
@@ -97,27 +125,42 @@ public class playerController : MonoBehaviour
         var normalToCenter = gm.globeCenter - transform.position;
         Vector3 grav;
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.up, out hit, 5, layerMask))
+        if (Physics.Raycast(transform.position, -transform.up, out hit, 5, layerMask) && canDetectSlope)
         {
-            print("Ground Detected!");
+            //print("Ground Detected!");
+            onSlope = true;
             Vector3 fw = new Vector3(transform.forward.x, 0, transform.forward.z);
-            Vector3 rt = new Vector3(transform.right.x, 0, transform.right.z);
-            Vector3 lastDir = (fw + rt).normalized;
-            Vector3 slopeDir = Vector3.ProjectOnPlane(lastDir, hit.normal);
-            transform.rotation = Quaternion.LookRotation(slopeDir);
+            Vector3 slopeDir = Vector3.ProjectOnPlane(transform.forward, hit.normal);
+            Vector3 mDir = transform.forward + slopeDir;
+
+            if (hit.normal != Vector3.up)
+            {
+                transform.forward = mDir;
+            }
+            
+            Debug.DrawRay(transform.position, hit.normal,Color.blue);
+            Debug.DrawRay(transform.position, slopeDir, Color.cyan);
             down = hit.point - transform.position;
             down = down.normalized;
             //grav = down * Physics.gravity.magnitude * gravMod;
             grav = Vector3.zero;
+            Vector3 mov = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed;
+            rb.velocity = mov + grav;
         }
         else {
+            if (onSlope)
+            {
+                onSlope = false;
+            }
+            
             Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
             down = normalToCenter.normalized;
             grav = down * Physics.gravity.magnitude * gravMod;
+            Vector3 mov = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed;
+            rb.velocity = mov + grav;
         }
-        Vector3 mov = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed;
-        rb.velocity = mov + grav;
+        
         Debug.DrawRay(transform.position, -transform.up * 5, Color.yellow);
 
         rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
@@ -180,5 +223,10 @@ public class playerController : MonoBehaviour
             maxSpeed = currSpeed * speedUpgradeMod;
             rotMod *= 1.25f;
         }
+    }
+
+    void ResetDetection()
+    {
+        canDetectSlope = true;
     }
 }
