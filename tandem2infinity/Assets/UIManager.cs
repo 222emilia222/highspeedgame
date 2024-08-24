@@ -10,14 +10,14 @@ public class UIManager : MonoBehaviour
     private GameManager gm;
     private AudioManager am;
 
+    public TMP_Text[] controlTexts;
     public TMP_Text peopleCounter;
+
     public RectTransform closer;
     [Header("Sliders")]
     public Slider[] sliders;
     public float initSegmentTime;
     public float segmentTime;
-    [HideInInspector]
-    public int slideNum = 0;
     private float _sliderFill;
     [HideInInspector]
     public float SliderFill
@@ -28,7 +28,7 @@ public class UIManager : MonoBehaviour
         }
         set
         {
-            if (value < initSegmentTime + segmentTime * pc.peopleNum)
+            if (value < initSegmentTime + segmentTime * pc.PeopleNum)
             { 
                 if (value < 0) { value = 0; }
                 _sliderFill = value; 
@@ -36,12 +36,15 @@ public class UIManager : MonoBehaviour
         }
     }
     public float allTime;
+    [HideInInspector]
+    public float timer;
 
     private void Start()
     {
         pc = FindAnyObjectByType<playerController>();
         gm = GetComponent<GameManager>();
         am = GetComponent<AudioManager>();
+        timer = 0;
 
         for (int i = 0; i < sliders.Length; i++)
         {
@@ -54,14 +57,18 @@ public class UIManager : MonoBehaviour
             else { sliders[i].minValue = 0; sliders[i].maxValue = initSegmentTime; }
         }
         allTime = initSegmentTime + segmentTime * (sliders.Length-1);
+
+        for (int i = 0; i < controlTexts.Length; i++)
+        {
+            controlTexts[i].enabled = false;
+        }
     }
     private void Update()
     {
-        //People Pick Up Counter
-        peopleCounter.text = pc.peopleNum + 1 + "/" + gm.maxPplNum + " Bikers";
+        peopleCounter.text = pc.PeopleNum + 1 + "/" + gm.maxPplNum;
 
         //Slider time filler
-        for (int i = 0;i <= slideNum; i++)
+        for (int i = 0;i <= pc.PeopleNum; i++)
         {
             if (!pc.crashTimedOut)
             {

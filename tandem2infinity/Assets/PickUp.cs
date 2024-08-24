@@ -23,6 +23,8 @@ public class PickUp : MonoBehaviour
         glowTransform.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.25f, (Mathf.Sin(Time.timeSinceLevelLoad) + 1) /2 );
 
         transform.LookAt(Camera.main.transform.parent.parent);
+
+        transform.rotation *= Quaternion.Euler(0, (Time.fixedDeltaTime) % 360, 0);
     }
     private void OnTriggerEnter(Collider other)
     {

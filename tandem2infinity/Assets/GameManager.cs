@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,24 +14,32 @@ public class GameManager : MonoBehaviour
     public Vector3 globeCenter;
     [HideInInspector]
     public bool pressedQuit=false;
+    private GameObject[] pickups;
+    [HideInInspector]
+    public TimeSpan finTime;
+    private TimeSpan rTime;
+    private DateTime startTime;
 
     private void Start()
     {
         um = GetComponent<UIManager>();
+        pickups = GameObject.FindGameObjectsWithTag("Biker");
         globeCenter = globe.position;
-        maxPplNum = um.sliders.Length + 1;
+        maxPplNum = um.sliders.Length;
+        startTime = DateTime.Now;
         StartCoroutine(ConsoleLog());
     }
     private IEnumerator ConsoleLog()
     {
         yield return null;
-        print("Minimum Time: " + um.allTime + "s; Globeradius: " + globeCenter.magnitude * 2 + ";");
+        print("Minimum Time: " + um.allTime + "s; Globeradius: " + globeCenter.magnitude * 2 + "; Biker PickUps: " + pickups.Length + "/" + maxPplNum + ";");
     }
     private void Update()
     {
+        rTime = DateTime.Now - startTime;
+
         if (Input.GetKey(KeyCode.Escape))
         {
-            //Quit Event
             StartCoroutine(QuitGame());
         }
     }
@@ -43,5 +52,11 @@ public class GameManager : MonoBehaviour
         Application.Quit();
         print("Quit Game!");
         Debug.Break();
+    }
+    private IEnumerator FinishGame()
+    {
+        finTime = rTime;
+        //finish game stuff
+        return null;
     }
 }
