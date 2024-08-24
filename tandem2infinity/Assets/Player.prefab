@@ -232,14 +232,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coll: {fileID: 6177068219542184987}
   peopleNum: 1
-  speed: 0
   currSpeed: 0
   baseSpeedMod: 2500
   rotMod: 100
   gravityRotAdjust: 183
   gravMod: 4
   crashTime: 2
-  crashForce: 15
+  crashForce: 18
   crashPenalty: 20
   pickUpBonus: 5
   crashSpeed: 0

@@ -8,8 +8,7 @@ public class GameManager : MonoBehaviour
 
     public int maxPplNum;
 
-    [SerializeField]
-    Transform globe;
+    public Transform globe;
     [HideInInspector]
     public Vector3 globeCenter;
     [HideInInspector]

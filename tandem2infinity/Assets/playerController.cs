@@ -79,17 +79,20 @@ public class playerController : MonoBehaviour
     }
     void FixedUpdate()
     {
-        //globe rotation
+
+        //globe rotation & forward movement
         var normalToCenter = gm.globeCenter - transform.position;
+
+        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude * gravMod + transform.forward * baseSpeedMod * Time.fixedDeltaTime * currSpeed, ForceMode.Force);
+
         Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
+
+        //
 
         //player rotation
         rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
         rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);
-
-        //forward movement
-        rb.AddForce(normalToCenter.normalized * Physics.gravity.magnitude * gravMod + transform.forward * baseSpeedMod * Time.fixedDeltaTime * currSpeed, ForceMode.Force);
 
         //bike animation
         wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
@@ -116,10 +119,10 @@ public class playerController : MonoBehaviour
         crashTimedOut = false;
         currSpeed = crashSpeed;
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
         //CRASH CHECK
-        if (other.gameObject.CompareTag("Obstacle"))
+        if (collision.gameObject.CompareTag("Obstacle"))
         {
             if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
         }
@@ -128,7 +131,7 @@ public class playerController : MonoBehaviour
     {
         if (!gm.pressedQuit) { 
             //3D Model
-            loops[peopleNum] = Instantiate(loopFrame, GetComponentInChildren<BoxCollider>().transform);
+            loops[peopleNum] = Instantiate(loopFrame, GetComponentInChildren<CapsuleCollider>().transform);
             pedals[peopleNum+1] = loops[peopleNum].transform.Find("PedalCenter").gameObject;
             loops[peopleNum].transform.localPosition -= loopOffset * (peopleNum+1);
             backFrame.transform.localPosition -= loopOffset;
