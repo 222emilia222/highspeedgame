@@ -13,10 +13,12 @@ public class playerController : MonoBehaviour
     public LayerMask layerMask;
     public BoxCollider coll;
 
+    private bool onlyOnce = true;
+
     public int PeopleNum
     {
         get { return _peopleNum; }
-        set { _peopleNum = value; um.peopleCounter.text = value + 1 + "/" + gm.maxPplNum; }
+        set { _peopleNum = value; um.bikerCounter.text = value + 1 + "/" + gm.maxPplNum; }
     }
     private int _peopleNum;
 
@@ -26,7 +28,7 @@ public class playerController : MonoBehaviour
     public float speedUpgradeMod;
     public float speedOnetimeBonus;
     public float rotMod;
-    public float gravityRotAdjust;
+    public float rotAdjust;
     public float gravMod;
     private Vector3 down;
 
@@ -65,6 +67,7 @@ public class playerController : MonoBehaviour
 
     Quaternion startHandle;
     Quaternion startFrontFrame;
+    private float startTime;
 
     void Start()
     {
@@ -81,6 +84,7 @@ public class playerController : MonoBehaviour
         startHandle = handle.transform.localRotation;
         startFrontFrame = frontFrame.transform.localRotation;
         pedals[0] = pedalCenter;
+        startTime = Time.time;
     }
     private void Update()
     {
@@ -106,7 +110,7 @@ public class playerController : MonoBehaviour
             //Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToSlope.normalized) * transform.rotation;
             //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward, hit.normal), gravityRotAdjust);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward, hit.normal), rotAdjust);
 
             down = hit.point - transform.position;
             down = down.normalized;
@@ -114,10 +118,11 @@ public class playerController : MonoBehaviour
         }
         else {
             Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, gravityRotAdjust);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotAdjust);
             down = normalToCenter.normalized;
             grav = down * Physics.gravity.magnitude * gravMod;
         }
+
         rb.velocity = transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed + grav;
         Debug.DrawRay(transform.position, -transform.up * 5, Color.yellow);
 
@@ -177,6 +182,8 @@ public class playerController : MonoBehaviour
             currSpeed += speedOnetimeBonus;
             maxSpeed = currSpeed * speedUpgradeMod;
             rotMod *= 1.25f;
+
+            if(onlyOnce) { um.FlashText(2, um.controlTexts[4]); }
         }
     }
 }

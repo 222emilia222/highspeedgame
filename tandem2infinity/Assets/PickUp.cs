@@ -20,14 +20,12 @@ public class PickUp : MonoBehaviour
         Quaternion targetRotation = Quaternion.FromToRotation(-transform.up, normalToCenter.normalized) * transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 200);
 
-        iconTransform.rotation *= Quaternion.Euler(0, (Time.fixedDeltaTime * spinSpeed) % 360, 0);
+        //iconTransform.rotation *= Quaternion.Euler(0, (Time.fixedDeltaTime * spinSpeed) % 360, 0);
 
         glowTransform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * spinSpeed) % 360);
         glowTransform.localScale = Vector3.one * Mathf.Lerp(0.8f, 1.25f, (Mathf.Sin(Time.timeSinceLevelLoad) + 1) /2 );
 
         transform.LookAt(Camera.main.transform.parent.parent);
-
-        transform.rotation *= Quaternion.Euler(0, (Time.fixedDeltaTime) % 360, 0);
     }
     private void OnTriggerEnter(Collider other)
     {

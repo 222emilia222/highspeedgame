@@ -12,7 +12,7 @@ public class UIManager : MonoBehaviour
     private AudioManager am;
 
     public TMP_Text[] controlTexts;
-    public TMP_Text peopleCounter;
+    public TMP_Text bikerCounter;
 
     public Image closer;
     [Header("Sliders")]
@@ -57,12 +57,15 @@ public class UIManager : MonoBehaviour
             segments[i].enabled = false;
         }
         allTime = initSegmentTime + segmentTime * (segments.Length-1);
+        startScale = segments[1].rectTransform.localScale.x;
 
         for (int i = 0; i < controlTexts.Length; i++)
         {
             controlTexts[i].enabled = false;
         }
-        startScale = segments[1].rectTransform.localScale.x;
+        bikerCounter.enabled = false;
+
+        StartCoroutine(IntroText());
     }
     private void FixedUpdate()
     {
@@ -71,6 +74,8 @@ public class UIManager : MonoBehaviour
             currFill += Time.fixedDeltaTime;
         }
         filler.fillAmount = currFill / allTime;
+
+        timer += Time.fixedDeltaTime;
     }
     public void NewSegmentUnlock(int i)
     {
@@ -80,5 +85,32 @@ public class UIManager : MonoBehaviour
         segments[i].rectTransform.LeanScale(new Vector2(startScale, startScale), 0.5f);
         segments[i].GetComponent<CanvasGroup>().alpha = 0;
         segments[i].GetComponent<CanvasGroup>().LeanAlpha(1, 0.2f);
+
+        StartCoroutine(FlashText(1.8f, bikerCounter));
+    }
+    public IEnumerator FlashText(float seconds, TMP_Text text)
+    {
+        text.enabled = true;
+        yield return new WaitForSeconds(seconds/2);
+        text.GetComponent<CanvasGroup>().LeanAlpha(0, seconds / 2);
+        yield return new WaitForSeconds(seconds/2);
+        text.enabled = false;
+    }
+    public IEnumerator IntroText()
+    {
+        yield return new WaitForSeconds(0.4f);
+        controlTexts[0].enabled = true;
+        yield return new WaitForSeconds(0.9f);
+        controlTexts[0].enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        controlTexts[1].enabled = true;
+        yield return new WaitForSeconds(0.9f);
+        controlTexts[1].enabled = false;
+        yield return new WaitForSeconds(0.2f);
+        controlTexts[2].enabled = true;
+        yield return new WaitForSeconds(0.9f);
+        controlTexts[2].enabled = false;
+        yield return new WaitForSeconds(2f);
+        StartCoroutine(FlashText(3f, controlTexts[3]));
     }
 }

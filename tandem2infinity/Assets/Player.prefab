@@ -239,7 +239,7 @@ MonoBehaviour:
   speedUpgradeMod: 1.4
   speedOnetimeBonus: 0.2
   rotMod: 50
-  gravityRotAdjust: 0.5
+  gravityRotAdjust: 10
   gravMod: 1
   crashTime: 2
   crashForce: 18
