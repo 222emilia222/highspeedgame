@@ -90,7 +90,7 @@ public class playerController : MonoBehaviour
     {
         if (maxSpeed > currSpeed)
         {
-            if (um.SliderFill < um.initSegmentTime) { currSpeed += maxSpeed * Time.fixedDeltaTime / um.initSegmentTime; }
+            if (um.currFill < um.initSegmentTime) { currSpeed += maxSpeed * Time.fixedDeltaTime / um.initSegmentTime; }
             else { currSpeed += maxSpeed * Time.fixedDeltaTime / um.segmentTime; }
         }
 
@@ -100,11 +100,7 @@ public class playerController : MonoBehaviour
         if (Physics.Raycast(transform.position, -transform.up, out hit, 5, layerMask))
         {
             print("Ground Detected!");
-            Vector3 fw = new Vector3(transform.forward.x, 0, transform.forward.z);
-            Vector3 rt = new Vector3(transform.right.x, 0, transform.right.z);
-            Vector3 lastDir = (fw + rt).normalized;
-            Vector3 slopeDir = Vector3.ProjectOnPlane(lastDir, hit.normal);
-            transform.rotation = Quaternion.LookRotation(slopeDir);
+            transform.rotation = Quaternion.LookRotation(hit.normal);
             down = hit.point - transform.position;
             down = down.normalized;
             //grav = down * Physics.gravity.magnitude * gravMod;
@@ -147,7 +143,7 @@ public class playerController : MonoBehaviour
         rb.velocity = Vector3.zero;
         rb.AddForce((transform.up - transform.forward * 2) * crashForce, ForceMode.Impulse);
 
-        um.SliderFill -= crashPenalty;
+        um.currFill -= crashPenalty;
 
         yield return new WaitForSeconds(crashTime);
 
@@ -162,8 +158,8 @@ public class playerController : MonoBehaviour
             loops[PeopleNum].transform.localPosition -= loopOffset * (PeopleNum+1);
             backFrame.transform.localPosition -= loopOffset;
 
-            um.SliderFill += pickUpBonus;
-            um.sliders[PeopleNum + 1].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
+            um.currFill += pickUpBonus;
+            um.NewSegmentUnlock(PeopleNum + 1);
 
             if(PeopleNum != gm.maxPplNum) { 
                 var camController = cam.gameObject.GetComponent<cameraController>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,14 +14,15 @@ public class UIManager : MonoBehaviour
     public TMP_Text[] controlTexts;
     public TMP_Text peopleCounter;
 
-    public RectTransform closer;
+    public Image closer;
     [Header("Sliders")]
-    public Slider[] sliders;
+    public Image[] segments;
+    public Image filler;
     public float initSegmentTime;
     public float segmentTime;
     private float _sliderFill;
     [HideInInspector]
-    public float SliderFill
+    public float currFill
     {
         get
         {
@@ -35,9 +37,11 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+    [HideInInspector]
     public float allTime;
     [HideInInspector]
     public float timer;
+    private float startScale;
 
     private void Start()
     {
@@ -46,32 +50,35 @@ public class UIManager : MonoBehaviour
         am = GetComponent<AudioManager>();
         timer = 0;
 
-        for (int i = 0; i < sliders.Length; i++)
+        filler.fillAmount = 0;
+        closer.enabled = false;
+        for (int i = 1; i < segments.Length; i++)
         {
-            sliders[i].value = 0;
-            if (i > 0)
-            {
-                sliders[i].minValue = initSegmentTime + segmentTime * (i - 1);
-                sliders[i].maxValue = initSegmentTime + segmentTime * (i);
-            }
-            else { sliders[i].minValue = 0; sliders[i].maxValue = initSegmentTime; }
+            segments[i].enabled = false;
         }
-        allTime = initSegmentTime + segmentTime * (sliders.Length-1);
+        allTime = initSegmentTime + segmentTime * (segments.Length-1);
 
         for (int i = 0; i < controlTexts.Length; i++)
         {
             controlTexts[i].enabled = false;
         }
+        startScale = segments[1].rectTransform.localScale.x;
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        for (int i = 0;i <= pc.PeopleNum; i++)
+        if (!pc.crashTimedOut)
         {
-            if (!pc.crashTimedOut)
-            {
-                SliderFill += Time.deltaTime;
-            }
-            sliders[i].value = SliderFill;
+            currFill += Time.fixedDeltaTime;
         }
+        filler.fillAmount = currFill / allTime;
+    }
+    public void NewSegmentUnlock(int i)
+    {
+        segments[i].enabled = true;
+        if (i == 9) { closer.enabled = true; }
+        segments[i].rectTransform.localScale *= 3f;
+        segments[i].rectTransform.LeanScale(new Vector2(startScale, startScale), 0.5f);
+        segments[i].GetComponent<CanvasGroup>().alpha = 0;
+        segments[i].GetComponent<CanvasGroup>().LeanAlpha(1, 0.2f);
     }
 }

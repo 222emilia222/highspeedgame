@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         um = GetComponent<UIManager>();
         pickups = GameObject.FindGameObjectsWithTag("Biker");
         globeCenter = globe.position;
-        maxPplNum = um.sliders.Length;
+        maxPplNum = um.segments.Length;
         startTime = DateTime.Now;
         StartCoroutine(ConsoleLog());
     }
