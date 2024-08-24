@@ -88,18 +88,16 @@ public class playerController : MonoBehaviour
     }
     private void Update()
     {
-        if (crashTimedOut) { currSpeed = 0f; }
+        //print("PplNum: " + PeopleNum + ";");
     }
     void FixedUpdate()
     {
-        //add speed
         if (maxSpeed > currSpeed)
         {
             if (um.SliderFill < um.initSegmentTime) { currSpeed += maxSpeed * Time.fixedDeltaTime / um.initSegmentTime; }
             else { currSpeed += maxSpeed * Time.fixedDeltaTime / um.segmentTime; }
         }
 
-        //globe rotation & forward movement
         var normalToCenter = gm.globeCenter - transform.position;
         //slopeDir = Vector3.ProjectOnPlane(lastDir, slopeHit.normal);
         //transform.rotation = Quaternion.LookRotation(slopeDir);
@@ -119,12 +117,9 @@ public class playerController : MonoBehaviour
         rb.AddForce(down * Physics.gravity.magnitude * gravMod + transform.forward * Time.fixedDeltaTime * baseSpeedMod * currSpeed, ForceMode.Force);
         Debug.DrawRay(transform.position, -transform.up * 10, Color.yellow);
 
-
-        //player rotation
         rotation = Input.GetAxis("Horizontal") * rotMod * Time.fixedDeltaTime;
         rb.AddTorque(transform.rotation * new Vector3(0, rotation, 0), ForceMode.Force);
 
-        //bike animation
         wheels[0].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
         wheels[1].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);
         for (int i = 0; i <= PeopleNum; i++) { pedals[i].transform.rotation *= Quaternion.Euler(0, 0, (Time.fixedDeltaTime * animSpeed * currSpeed) % 360);}
@@ -136,18 +131,16 @@ public class playerController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //CRASH CHECK
         if (collision.gameObject.CompareTag("Obstacle"))
         {
             if (!crashTimedOut) { StartCoroutine(CrashTimeOut()); }
         }
     }
-
-    //CRASHHANDLER
     IEnumerator CrashTimeOut()
     {
         crashTimedOut = true;
         crashSpeed = currSpeed;
+        currSpeed = 0f;
         rb.velocity = Vector3.zero;
         rb.AddForce((transform.up - transform.forward * 2) * crashForce, ForceMode.Impulse);
 
@@ -161,15 +154,14 @@ public class playerController : MonoBehaviour
     public void BikerPickedUp()
     {
         if (!gm.pressedQuit) { 
-            //3D Model
             loops[PeopleNum] = Instantiate(loopFrame, GetComponentInChildren<CapsuleCollider>().transform);
             pedals[PeopleNum+1] = loops[PeopleNum].transform.Find("PedalCenter").gameObject;
             loops[PeopleNum].transform.localPosition -= loopOffset * (PeopleNum+1);
             backFrame.transform.localPosition -= loopOffset;
-            //UI
+
             um.SliderFill += pickUpBonus;
-            um.sliders[PeopleNum].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
-            //Camera
+            um.sliders[PeopleNum + 1].transform.Find("Border2").gameObject.GetComponent<Image>().color = Color.white;
+
             if(PeopleNum != gm.maxPplNum) { 
                 var camController = cam.gameObject.GetComponent<cameraController>();
                 camController.moveTo += upgradeAngleChange[PeopleNum];
@@ -179,7 +171,7 @@ public class playerController : MonoBehaviour
             {
                 //cam on side
             }
-            //Parameters
+
             PeopleNum++;
             currSpeed += speedOnetimeBonus;
             maxSpeed = currSpeed * speedUpgradeMod;

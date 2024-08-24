@@ -3156,6 +3156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb39eadf838efe41a4c7299fdba5a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controlTexts: []
   peopleCounter: {fileID: 948846228}
   closer: {fileID: 731378905}
   sliders:
@@ -3170,8 +3171,8 @@ MonoBehaviour:
   - {fileID: 1062130022}
   initSegmentTime: 50
   segmentTime: 30
-  slideNum: 0
   allTime: 0
+  timer: 0
 --- !u!1 &1928356526
 GameObject:
   m_ObjectHideFlags: 0
