@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
     public void NewSegmentUnlock(int i)
     {
         segments[i].enabled = true;
-        if (i == 9) { closer.enabled = true; }
+        if (i == 8) { closer.enabled = true; }
         segments[i].rectTransform.localScale *= 3f;
         segments[i].rectTransform.LeanScale(new Vector2(startScale, startScale), 0.5f);
         segments[i].GetComponent<CanvasGroup>().alpha = 0;

@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ConsoleLog()
     {
         yield return null;
-        print("Minimum Time: " + um.allTime + "s; Globeradius: " + globeCenter.magnitude * 2 + "; Biker PickUps: " + pickups.Length + "/" + maxPplNum + ";");
+        print("Minimum Time: " + um.allTime + "s; Globeradius: " + globeCenter.magnitude * 2 + "; Biker PickUps: " + (pickups.Length + 1) + "/" + maxPplNum + ";");
     }
     private void Update()
     {

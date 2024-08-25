@@ -13,7 +13,6 @@ public class carController : MonoBehaviour
     private bool isMoving = true;
     private GameObject anchor;
     public AudioClip honk1;
-    public AudioClip honk2;
 
     private void Start()
     {
