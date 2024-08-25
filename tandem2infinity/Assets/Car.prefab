@@ -54,6 +54,8 @@ MonoBehaviour:
   animSpeed: 100
   speed: 10
   stopTime: 4
+  honk1: {fileID: 8300000, guid: 9a09e05764dc9ce4e91ec22418c109c0, type: 3}
+  honk2: {fileID: 8300000, guid: 85f49b1ddd41b754a8dfc99d9ff324b4, type: 3}
 --- !u!65 &3975563619219429052
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -108,11 +110,11 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 63c716947baef0247b1baa2252f351eb, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.64
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -169,7 +171,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.4
       inSlope: 0
       outSlope: 0
       tangentMode: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class carController : MonoBehaviour
 {
+    private AudioSource audioSrc;
     public GameObject[] wheels;
     public float animSpeed;
     public float speed;
@@ -11,9 +12,12 @@ public class carController : MonoBehaviour
     private GameManager gm;
     private bool isMoving = true;
     private GameObject anchor;
+    public AudioClip honk1;
+    public AudioClip honk2;
 
     private void Start()
     {
+        audioSrc = GetComponent<AudioSource>();
         gm = FindAnyObjectByType<GameManager>();
         anchor = new GameObject("Car Anchor");
         anchor.transform.SetPositionAndRotation(gm.globe.position, this.transform.rotation);
@@ -41,7 +45,7 @@ public class carController : MonoBehaviour
     private IEnumerator StopAndHonk()
     {
         isMoving = false;
-        //honk sfx
+        audioSrc.PlayOneShot(honk1);
         yield return new WaitForSeconds(stopTime);
         isMoving = true;
     }
