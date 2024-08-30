@@ -176,13 +176,15 @@ public class playerController : MonoBehaviour
             um.currFill += pickUpBonus;
             um.NewSegmentUnlock(PeopleNum + 1);
 
-            if (PeopleNum != gm.maxPplNum) {
+            if (PeopleNum != gm.maxPplNum - 2) {
                 var camController = cam.gameObject.GetComponent<cameraController>();
                 camController.moveTo += upgradeAngleChange[PeopleNum];
                 camController.MoveCam();
             }
             else
             {
+                //placeolder fin:
+                StartCoroutine(gm.FinishGame());
                 //cam on side
             }
 

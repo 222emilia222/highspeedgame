@@ -39,16 +39,16 @@ public class UIManager : MonoBehaviour
     }
     [HideInInspector]
     public float allTime;
-    [HideInInspector]
-    public float timer;
     private float startScale;
 
+    public TMP_Text timer;
+    public GameObject placeholderWinScreen;
     private void Start()
     {
         pc = FindAnyObjectByType<playerController>();
         gm = GetComponent<GameManager>();
         am = GetComponent<AudioManager>();
-        timer = 0;
+        placeholderWinScreen.SetActive(false);
 
         filler.fillAmount = 0;
         closer.enabled = false;
@@ -74,8 +74,6 @@ public class UIManager : MonoBehaviour
             currFill += Time.fixedDeltaTime;
         }
         filler.fillAmount = currFill / allTime;
-
-        timer += Time.fixedDeltaTime;
     }
     public void NewSegmentUnlock(int i)
     {

@@ -53,10 +53,12 @@ public class GameManager : MonoBehaviour
         print("Quit Game!");
         Debug.Break();
     }
-    private IEnumerator FinishGame()
+    public IEnumerator FinishGame()
     {
         finTime = rTime;
-        //finish game stuff
-        return null;
+        um.timer.text = "Time: " + finTime.ToString(@"mm\:ss\:ff");
+        yield return new WaitForSeconds(1.5f);
+        Time.timeScale = 0;
+        um.placeholderWinScreen.SetActive(true);
     }
 }
